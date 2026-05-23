@@ -23,12 +23,18 @@ pipeline {
         stage('E2E') {
             steps {
                 sh '''
-                    npm install serve
-                    npx serve -s build -l 3000 &
+                    mkdir -p test-results
 
-                    npx playwright test \
-                      --reporter=junit \
-                      > test-results/junit.xml
+                    npm install serve
+
+                    npx serve -s build -l 3000 > /dev/null 2>&1 &
+
+                    sleep 3
+
+                    npx playwright test --reporter=junit > test-results/junit.xml
+
+                    ls -al test-results
+                    cat test-results/junit.xml
                 '''
             }
         }
