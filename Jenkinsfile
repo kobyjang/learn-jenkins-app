@@ -31,7 +31,7 @@ pipeline {
 
                     sleep 3
 
-                    npx playwright test --reporter=junit > test-results/junit.xml
+                    PLAYWRIGHT_JUNIT_OUTPUT_NAME=test-results/junit.xml npx playwright test --reporter=junit
 
                     ls -al test-results
 
