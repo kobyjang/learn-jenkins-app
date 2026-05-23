@@ -23,19 +23,9 @@ pipeline {
         stage('E2E') {
             steps {
                 sh '''
-                    mkdir -p test-results
-
                     npm install serve
-
-                    npx serve -s build -l 3000 > /dev/null 2>&1 &
-
-                    sleep 3
-
-                    PLAYWRIGHT_JUNIT_OUTPUT_NAME=test-results/junit.xml npx playwright test --reporter=junit
-
-                    ls -al test-results
-
-                    cat test-results/junit.xml
+                    node_modules/.bin/serve -s build & sleep 10
+                    npx playwright test
                 '''
             }
         }
@@ -43,7 +33,7 @@ pipeline {
 
     post {
         always {
-            junit 'test-results/junit.xml'
+            junit 'jest-results/junit.xml'
         }
     }
 }
