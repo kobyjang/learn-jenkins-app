@@ -25,7 +25,10 @@ pipeline {
                 sh '''
                     npm install serve
                     npx serve -s build -l 3000 &
-                    npx playwright test
+
+                    npx playwright test \
+                      --reporter=junit \
+                      > test-results/junit.xml
                 '''
             }
         }
