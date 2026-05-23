@@ -34,6 +34,7 @@ pipeline {
                     npx playwright test --reporter=junit > test-results/junit.xml
 
                     ls -al test-results
+
                     cat test-results/junit.xml
                 '''
             }
