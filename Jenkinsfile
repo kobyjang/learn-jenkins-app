@@ -49,20 +49,16 @@ pipeline {
             }
         }
 
-        stage ('Prod E2E') {
-
+        stage('Prod E2E') {
             environment {
                 CI_ENVIRONMENT_URL = 'https://famous-donut-2a466a.netlify.app'
-
             }
-            
+
             steps {
                 sh '''
-                    npx playwrigt test --reporter=html
+                    npx playwright test --reporter=html
                 '''
             }
-        }
-
         }
     }
 
