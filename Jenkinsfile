@@ -36,7 +36,8 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy]'){
+
+        stage('Deploy'){
             steps {
                 sh '''
                     npm install netlify-cli@20.1.1
@@ -46,6 +47,22 @@ pipeline {
                     node_modules/.bin/netlify deploy --dir=build --prod 
                 ''' 
             }
+        }
+
+        stage ('Prod E2E') {
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://famous-donut-2a466a.netlify.app'
+
+            }
+            
+            steps {
+                sh '''
+                    npx playwrigt test --reporter=html
+                '''
+            }
+        }
+
         }
     }
 
