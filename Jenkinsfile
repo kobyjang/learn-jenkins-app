@@ -49,6 +49,14 @@ pipeline {
             }
         }
 
+        stage('Approval'){
+            steps {
+                timeout(1) {
+                    input message: '배포를 진행할까요?', ok: '네 배포합니다.'
+                }
+            }
+        }
+
         stage('Deploy prod'){
             steps {
                 sh '''
