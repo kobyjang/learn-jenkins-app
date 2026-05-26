@@ -4,6 +4,9 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'ap-northeast-2'
+        AWS_ECS_CLUSTER = 'infinite-cat-0yei20'
+        AWS_ECS_SERVICE_PROD = 'LeanJenkinsApp-Service-prod'
+        AWS_ECS_TD_PROD = 'LearnJenkinsApp-TaskDefinition-Prod'
     }
 
     stages {
@@ -22,9 +25,10 @@ pipeline {
                     sh '''
                         aws --version
                         yum install jq -y
-                        LATEST_TD_REVISION = $(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
                         echo $LATEST_TD_REVISION
-                        aws ecs update-service --cluster infinite-cat-0yei20 --service LeanJenkinsApp-Service-prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:1
+                        aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD --task-definition $AWS_ECS_TD_PROD:$LATEST_TD_REVISION
+                        aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD
                     '''
                 }
                 
