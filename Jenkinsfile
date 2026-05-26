@@ -3,7 +3,7 @@ pipeline {
     agent none 
 
     environment {
-        AWS_DEFAUKT)REGION = 'ap-northeast-2'
+        AWS_DEFAULT_REGION = 'ap-northeast-2'
     }
 
     stages {
@@ -13,29 +13,28 @@ pipeline {
                 docker { 
                     image 'amazon/aws-cli'
                     reuseNode true
-                    // aws-cli 이미지는 기본적으로 실행 후 바로 종료되므로 엔트리포인트 무력화
                     args "--entrypoint=''" 
                 }
             }
 
             steps {
-            
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
                         aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json
                     '''
                 }
-            
+                
+                
             }
         }
 
         stage('Build') {
             agent {
                 docker { 
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy' 
                     reuseNode true
-                     }
+                }
             }
             steps {
                 sh '''
@@ -49,8 +48,6 @@ pipeline {
         }
 
        
-
     }
-
-   
+  
 }
