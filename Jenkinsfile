@@ -3,6 +3,8 @@ pipeline {
     agent none 
 
     environment {
+        REACT_APP_VERSION = '1.0.$BUILD_ID'
+        APP_NAME = 'myjenkinsapp'
         AWS_DEFAULT_REGION = 'ap-northeast-2'
         AWS_ECS_CLUSTER = 'infinite-cat-0yei20'
         AWS_ECS_SERVICE_PROD = 'LeanJenkinsApp-Service-prod'
@@ -42,7 +44,7 @@ pipeline {
                 sh '''
                     yum install -y docker
                     # 애플 실리콘칩(M1,M2 등) 사용자는 해당 옵션 붙이기
-                    docker build --platform linux/amd64 -t myjenkinsapp .
+                    docker build --platform linux/amd64 -t APP_NAME:REACT_APP_VERSION .
                     # docker build -t myjenkinsapp .
                 '''
             }
