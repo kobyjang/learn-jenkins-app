@@ -9,32 +9,7 @@ pipeline {
         AWS_ECS_TD_PROD = 'LearnJenkinsApp-TaskDefinition-Prod'
     }
 
-    stages {
-
-        stage('Deploy to AWS') {
-            agent {
-                docker { 
-                    image 'amazon/aws-cli'
-                    reuseNode true
-                    args "-u root --entrypoint='' -v /var/run/docker.sock:/var/run/docker.sock"
-                }
-            }
-
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh '''
-                        aws --version
-                        yum install jq -y
-                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
-                        echo $LATEST_TD_REVISION
-                        aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD --task-definition $AWS_ECS_TD_PROD:$LATEST_TD_REVISION
-                        aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD
-                    '''
-                }
-                
-                
-            }
-        }
+   stages {
 
         stage('Build') {
             agent {
@@ -51,6 +26,17 @@ pipeline {
                     npm ci
                     npm run build
                 '''
+            }
+        }
+
+            // 빌드 이후에 수행
+        stage('Build Docker image') {
+            agent {
+                docker { 
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args "-u root --entrypoint='' -v /var/run/docker.sock:/var/run/docker.sock"
+                }
             }
             steps {
                 sh '''
