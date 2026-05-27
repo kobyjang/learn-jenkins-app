@@ -42,6 +42,7 @@ pipeline {
                 }
             }
             steps {
+
                 withCredentials([usernamePassword(
                     credentialsId: 'my-aws',
                     usernameVariable: 'AWS_ACCESS_KEY_ID',
@@ -55,6 +56,7 @@ pipeline {
                     docker push $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION
                     # docker build -t myjenkinsapp .
                 '''
+                }
             }
         }
     }
