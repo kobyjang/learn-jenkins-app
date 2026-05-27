@@ -16,7 +16,7 @@ pipeline {
                 docker { 
                     image 'amazon/aws-cli'
                     reuseNode true
-                    args "-u root --entrypoint=''" 
+                    args "-u root --entrypoint='' -v /var/run/docker.sock:/var/run/docker.sock"
                 }
             }
 
@@ -52,9 +52,14 @@ pipeline {
                     npm run build
                 '''
             }
+            steps {
+                sh '''
+                    yum install -y docker
+                    # 애플 실리콘칩(M1,M2 등) 사용자는 해당 옵션 붙이기
+                    docker build --platform linux/amd64 -t myjenkinsapp .
+                    # docker build -t myjenkinsapp .
+                '''
+            }
         }
-
-       
     }
-  
 }
