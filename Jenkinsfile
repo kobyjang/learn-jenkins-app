@@ -42,6 +42,11 @@ pipeline {
                 }
             }
             steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'my-aws',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
                 sh '''
                     yum install -y docker
                     # 애플 실리콘칩(M1,M2 등) 사용자는 해당 옵션 붙이기
